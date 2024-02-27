@@ -1,29 +1,30 @@
 const mongoose = require('mongoose');
+const locationSchema = new mongoose.Schema({
+  address: String,
+  stationName: String,
+  amenities: [String],
+});
+
+const chargingPointSchema = new mongoose.Schema({
+  locationId: {type: mongoose.Schema.Types.ObjectId, ref: 'Location'},
+  manufacturer: String,
+  isAvailableChargingPoint: Boolean,
+
+});
 
 const connectorSchema = new mongoose.Schema({
-  type: String,
+  chargingPointId: {type: mongoose.Schema.Types.ObjectId, ref: 'ChargingPoint'},
+  locationId: {type: mongoose.Schema.Types.ObjectId, ref: 'Location'},
+  connectorType: String,
   wattage: Number,
   manufacturer: String,
+  isAvailableConnector: Boolean,
+  maxSessionDuration: Number,
+  costPerKWh: Number,
 });
 
-const chargePointSchema = new mongoose.Schema({
-  connectors: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Connector',
-  }],
-});
 
-const locationSchema = new mongoose.Schema({
-  locationName: String,
-  chargingStationName: String,
-  chargePoints: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'ChargePoint',
-  }],
-});
-
-const Connector = mongoose.model('Connector', connectorSchema);
-const ChargePoint = mongoose.model('ChargePoint', chargePointSchema);
 const Location = mongoose.model('Location', locationSchema);
-
-module.exports = { Connector, ChargePoint, Location };
+const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
+const Connector = mongoose.model('Connector', connectorSchema);
+module.exports = {Location, ChargingPoint, Connector};
