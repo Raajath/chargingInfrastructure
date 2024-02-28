@@ -7,15 +7,15 @@ const locationSchema = new mongoose.Schema({
 });
 
 const chargingPointSchema = new mongoose.Schema({
-  locationId: {type: mongoose.Schema.Types.ObjectId, ref: 'Location'},
+  locationId: {type: mongoose.Schema.Types.ObjectId},
   manufacturer: String,
   isAvailableChargingPoint: Boolean,
 
 });
 
 const connectorSchema = new mongoose.Schema({
-  chargingPointId: {type: mongoose.Schema.Types.ObjectId, ref: 'ChargingPoint'},
-  locationId: {type: mongoose.Schema.Types.ObjectId, ref: 'Location'},
+  chargingPointId: {type: mongoose.Schema.Types.ObjectId},
+  locationId: {type: mongoose.Schema.Types.ObjectId},
   connectorType: String,
   wattage: Number,
   manufacturer: String,

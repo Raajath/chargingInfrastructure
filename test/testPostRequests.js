@@ -92,10 +92,9 @@ describe('Charging point creation test', async ()=>{
       isAvailableChargingPoint: true,
     };
     const invalidId=['65de084c2682eb4883cc8e25', 12345];
-
-    for (const id of invalidId) {
+    for (let i=0; i<invalidId.length; i++) {
       await request(app)
-          .post(`/locations/${id}/chargePoints`)
+          .post(`/locations/${invalidId[i]}/chargePoints`)
           .send(newChargePoint)
           .expect(400);
     }

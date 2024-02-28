@@ -29,6 +29,7 @@ const createChargePoint = async (req, res) => {
     const chargePointData=req.body;
 
     await checkIfIdExists(Location, locationId, 'locationId does not exist ');
+
     const chargingPoint = new ChargingPoint(
         {
           locationId: locationId,
@@ -48,9 +49,9 @@ const createConnector= async (req, res) => {
     const locationId=req.params.locationId;
     const chargingPointId=req.params.chargingPointId;
     const connectorData=req.body;
-
     await checkIfIdExists(Location, locationId, 'locationId does not exist ');
     await checkIfIdExists(ChargingPoint, chargingPointId, 'chargingPointId does not exist');
+
 
     const connector = new Connector(
         {
