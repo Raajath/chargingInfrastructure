@@ -25,10 +25,8 @@
     "express": "^4.18.2",
     "jscpd": "^3.5.4",
     "mocha": "^10.2.0",
-    "nyc": "^15.1.0"
-  },
-  "dependencies": {
     "mongodb-memory-server": "^9.1.6",
+    "nyc": "^15.1.0",
     "supertest": "^6.3.4"
   }
 }
