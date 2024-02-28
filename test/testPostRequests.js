@@ -1,11 +1,12 @@
 const {describe, it, beforeEach, before, after} = require('mocha');
+const {locationSchema, chargingPointSchema} =require('../infrastructureSchema');
 const chai = require('chai');
 const expect = chai.expect;
 const {MongoMemoryServer} = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const request = require('supertest');
 const app=require('../index');
-const {locationSchema, chargingPointSchema} =require('../infrastructureSchema');
+
 const Location = mongoose.model('Location', locationSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
 
@@ -24,11 +25,15 @@ after(async ()=>{
   await mongoServer.stop();
 });
 
-describe('Location is properly created', () => {
+
+function dropDbBeforeEach() {
   beforeEach(async function() {
     await mongoose.connection.db.dropDatabase();
   });
+}
 
+describe('Location is properly created', () => {
+  dropDbBeforeEach();
   it('should create a new location', async () => {
     const newLocation = {
       address: '123',
@@ -63,12 +68,9 @@ describe('Location is properly created', () => {
 
 
 describe('Charging point creation test', async ()=>{
-  let location;
-  beforeEach(async function() {
-    await mongoose.connection.db.dropDatabase();
-    location = await new Location({address: 'Test1'}).save();
-  });
+  dropDbBeforeEach();
   it('should create a new charging point with a valid location ID', async () => {
+    const location = await new Location({address: 'Test1'}).save();
     const chargePointData = {
       manufacturer: 'abb',
       isAvailableChargingPoint: true,
@@ -79,10 +81,10 @@ describe('Charging point creation test', async ()=>{
         .send(chargePointData)
         .expect(201);
 
-    expect(response.body.locationId).to.equal(location._id.toString());
     expect(response.body.manufacturer).to.deep.equal(chargePointData.manufacturer);
     expect(response.body.isAvailableChargingPoint).to.deep
         .equal(chargePointData.isAvailableChargingPoint);
+    expect(response.body.locationId).to.equal(location._id.toString());
   });
 
   it('should return an 400 for creating a chargingPoint with invalid Id', async () => {
@@ -102,14 +104,10 @@ describe('Charging point creation test', async ()=>{
 });
 
 describe('connector creation test', async ()=>{
-  let location;
-  let chargingPoint;
-  beforeEach(async function() {
-    await mongoose.connection.db.dropDatabase();
-    location = await new Location({address: 'Test1'}).save();
-    chargingPoint=await new ChargingPoint({manufacturer: 'abb'}).save();
-  });
+  dropDbBeforeEach();
   it('should create a new connector', async () => {
+    const location = await new Location({address: 'Test1'}).save();
+    const chargingPoint=await new ChargingPoint({manufacturer: 'abb'}).save();
     const connectorData = {
       connectorType: 'DC',
       wattage: 7,
@@ -138,12 +136,12 @@ describe('connector creation test', async ()=>{
 
   it('should return an 400 for creating a connector with invalid Id', async () => {
     const connectorData = {
-      connectorType: 'DC',
-      wattage: 7,
+      connectorType: 'Ac',
+      wattage: 11,
       manufacturer: 'abb',
-      isAvailableConnector: true,
-      maxSessionDuration: 2,
-      costPerKWh: 2,
+      isAvailableConnector: false,
+      maxSessionDuration: 3,
+      costPerKWh: 4,
     };
     const invalidIdLocation=['65de084c2682eb4883cc8e25', 12345];
     const invalidIdCP=['4365634', 12345];
