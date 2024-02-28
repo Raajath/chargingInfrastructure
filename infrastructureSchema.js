@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const locationSchema = new mongoose.Schema({
-  address: String,
+  address: {type: String,
+    required: true},
   stationName: String,
   amenities: [String],
 });
@@ -24,7 +25,5 @@ const connectorSchema = new mongoose.Schema({
 });
 
 
-const Location = mongoose.model('Location', locationSchema);
-const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
-const Connector = mongoose.model('Connector', connectorSchema);
-module.exports = {Location, ChargingPoint, Connector};
+module.exports={locationSchema, chargingPointSchema, connectorSchema};
+

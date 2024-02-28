@@ -1,11 +1,10 @@
 const {Router} = require('express');
 const router = Router();
 const {createLocation, createChargePoint,
-  createConnector, getChargingPointsByLocationId}=require('./controller/createRequest');
+  createConnector}=require('./controller/createRequest');
 
 router.post('/locations', createLocation);
-router.post('/chargePoints', createChargePoint);
-router.post('/connectors', createConnector);
-router.get('/locations/:locationId/chargePoints', getChargingPointsByLocationId);
+router.post('/locations/:locationId/chargePoints', createChargePoint);
+router.post('/locations/:locationId/chargePoints/:chargingPointId/connectors', createConnector);
 
 module.exports=router;

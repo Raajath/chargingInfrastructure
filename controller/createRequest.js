@@ -1,4 +1,16 @@
-const {Location, ChargingPoint, Connector}=require('../infrastructureSchema');
+const mongoose=require('mongoose');
+const {locationSchema, chargingPointSchema, connectorSchema} =require('../infrastructureSchema');
+const Location = mongoose.model('Location', locationSchema);
+const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
+const Connector = mongoose.model('Connector', connectorSchema);
+
+
+async function checkIfIdExists(Model, id, errorMessage) {
+  const documentExists = await Model.findOne({_id: id});
+  if (!documentExists) {
+    throw new Error(errorMessage);
+  }
+}
 
 
 const createLocation=async (req, res) => {
@@ -13,7 +25,17 @@ const createLocation=async (req, res) => {
 
 const createChargePoint = async (req, res) => {
   try {
-    const chargingPoint = new ChargingPoint(req.body);
+    const locationId=req.params.locationId;
+    const chargePointData=req.body;
+
+    await checkIfIdExists(Location, locationId, 'locationId does not exist ');
+    const chargingPoint = new ChargingPoint(
+        {
+          locationId: locationId,
+          manufacturer: chargePointData.manufacturer,
+          isAvailableChargingPoint: chargePointData.isAvailableChargingPoint,
+        },
+    );
     await chargingPoint.save();
     res.status(201).send(chargingPoint);
   } catch (error) {
@@ -23,20 +45,30 @@ const createChargePoint = async (req, res) => {
 
 const createConnector= async (req, res) => {
   try {
-    const connector = new Connector(req.body);
+    const locationId=req.params.locationId;
+    const chargingPointId=req.params.chargingPointId;
+    const connectorData=req.body;
+
+    await checkIfIdExists(Location, locationId, 'locationId does not exist ');
+    await checkIfIdExists(ChargingPoint, chargingPointId, 'chargingPointId does not exist');
+
+    const connector = new Connector(
+        {
+          chargingPointId: chargingPointId,
+          locationId: locationId,
+          connectorType: connectorData.connectorType,
+          wattage: connectorData.wattage,
+          manufacturer: connectorData.manufacturer,
+          isAvailableConnector: connectorData.isAvailableConnector,
+          maxSessionDuration: connectorData.maxSessionDuration,
+          costPerKWh: connectorData.costPerKWh,
+        },
+    );
     await connector.save();
     res.status(201).send(connector);
   } catch (error) {
     res.status(400).send(error);
   }
 };
-const getChargingPointsByLocationId = async (req, res) =>{
-  try {
-    const id=req.params.locationId;
-    const chargingPoints=await ChargingPoint.find({locationId: id});
-    res.status(200).send(chargingPoints);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-};
-module.exports={createLocation, createChargePoint, createConnector, getChargingPointsByLocationId};
+
+module.exports={createLocation, createChargePoint, createConnector};
