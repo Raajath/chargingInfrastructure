@@ -7,15 +7,15 @@ const locationSchema = new mongoose.Schema({
 });
 
 const chargingPointSchema = new mongoose.Schema({
-  locationId: {type: mongoose.Schema.Types.ObjectId},
+  locationId: String, // passed as string as while testing it allows as string
   manufacturer: String,
   isAvailableChargingPoint: Boolean,
 
 });
 
 const connectorSchema = new mongoose.Schema({
-  chargingPointId: {type: mongoose.Schema.Types.ObjectId},
-  locationId: {type: mongoose.Schema.Types.ObjectId},
+  chargingPointId: String,
+  locationId: String, // if location and chargingPoint Exists in DB is tested in createRequest
   connectorType: String,
   wattage: Number,
   manufacturer: String,
@@ -24,6 +24,6 @@ const connectorSchema = new mongoose.Schema({
   costPerKWh: Number,
 });
 
-
+// convert locationId chargingId to string and pass as input
 module.exports={locationSchema, chargingPointSchema, connectorSchema};
 

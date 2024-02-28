@@ -121,6 +121,9 @@ describe('connector creation test', async ()=>{
         .send(connectorData)
         .expect(201);
 
+    const find= await Location.find({_id: response.body.locationId});
+    expect(find[0].address).to.equal(location.address);// show we can use find with inputid string
+
     expect(response.body.locationId).to.equal(location._id.toString());
     expect(response.body.chargingPointId).to.equal(chargingPoint._id.toString());
 
