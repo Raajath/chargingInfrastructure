@@ -30,6 +30,7 @@ const createChargePoint = async (req, res) => {
 
     await checkIfIdExists(Location, locationId, 'locationId does not exist ');
 
+
     const chargingPoint = new ChargingPoint(
         {
           locationId: locationId,
@@ -46,12 +47,12 @@ const createChargePoint = async (req, res) => {
 
 const createConnector= async (req, res) => {
   try {
-    const locationId=req.params.locationId;
-    const chargingPointId=req.params.chargingPointId;
     const connectorData=req.body;
+    const locationId = req.params.locationId;
+    const chargingPointId = req.params.chargingPointId;
     await checkIfIdExists(Location, locationId, 'locationId does not exist ');
     await checkIfIdExists(ChargingPoint, chargingPointId, 'chargingPointId does not exist');
-
+    const location=await Location.findOne({_id: locationId});
 
     const connector = new Connector(
         {
@@ -63,6 +64,8 @@ const createConnector= async (req, res) => {
           isAvailableConnector: connectorData.isAvailableConnector,
           maxSessionDuration: connectorData.maxSessionDuration,
           costPerKWh: connectorData.costPerKWh,
+          coordinates: location.coordinates,
+          // automatically assign coordinates from location while inserting
         },
     );
     await connector.save();

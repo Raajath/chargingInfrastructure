@@ -4,10 +4,13 @@ const locationSchema = new mongoose.Schema({
     required: true},
   stationName: String,
   amenities: [String],
+  coordinates: {
+    type: [Number],
+  },
 });
 
 const chargingPointSchema = new mongoose.Schema({
-  locationId: String, // passed as string as while testing it allows as string
+  locationId: String,
   manufacturer: String,
   isAvailableChargingPoint: Boolean,
 
@@ -15,13 +18,17 @@ const chargingPointSchema = new mongoose.Schema({
 
 const connectorSchema = new mongoose.Schema({
   chargingPointId: String,
-  locationId: String, // if location and chargingPoint Exists in DB is tested in createRequest
+  locationId: String,
   connectorType: String,
   wattage: Number,
   manufacturer: String,
   isAvailableConnector: Boolean,
   maxSessionDuration: Number,
   costPerKWh: Number,
+  coordinates: {
+    type: [Number],
+    index: '2dsphere',
+  },
 });
 
 // convert locationId chargingId to string and pass as input
