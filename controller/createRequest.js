@@ -70,8 +70,8 @@ const createConnector= async (req, res) => {
     );
     await connector.save();
     res.status(201).send(connector);
-  } catch (error) {
-    res.status(400).send(error);
+  } catch (insertError) {
+    res.status(400).send(insertError);
   }
 };
 

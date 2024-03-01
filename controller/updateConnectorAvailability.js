@@ -1,8 +1,6 @@
 const mongoose= require('mongoose');
 const {connectorSchema} =require('../infrastructureSchema');
 const Connector = mongoose.model('Connector', connectorSchema);
-
-
 const updateWhenConnectedOrRemoved = async (req, res)=>{
   try {
     const {connected} = req.body;

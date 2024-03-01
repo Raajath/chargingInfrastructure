@@ -1,13 +1,12 @@
-const mongoose= require('mongoose');
 const {connectorSchema} =require('../infrastructureSchema');
+const mongoose= require('mongoose');
 const Connector = mongoose.model('Connector', connectorSchema);
-
 
 const getConnectors = async (req, res)=>{
   try {
     const {longitude, latitude, connectorType}=req.body;
 
-    const connectors = await Connector.find({
+    const gotConnectors = await Connector.find({
       coordinates: {
         $nearSphere: {
           $geometry: {
@@ -20,9 +19,9 @@ const getConnectors = async (req, res)=>{
       connectorType: connectorType,
       isAvailableConnector: true,
     });
-    res.status(200).send(connectors);
-  } catch (error) {
-    res.status(400).send(error);
+    res.status(200).send(gotConnectors);
+  } catch (err) {
+    res.status(400).send(err);
   }
 };
 

@@ -23,10 +23,14 @@ after(async ()=>{
   await stopMongoServer();
 });
 
+async function dropDB() {
+  await mongoose.connection.db.dropDatabase();
+}
+
 
 describe('GET request connectors  ', ()=>{
   afterEach(async function() {
-    await mongoose.connection.db.dropDatabase();
+    await dropDB();
   });
   it('should return connectors  of specified coordinates and of the specified type', async () => {
     const sampleConnectors = [
@@ -84,7 +88,7 @@ describe('GET request connectors  ', ()=>{
 
 describe('Patch request for connectors ', ()=>{
   beforeEach(async function() {
-    await mongoose.connection.db.dropDatabase();
+    await dropDB();
   });
   it('Should update boolean value isAvailableConnector ', async () => {
     const sampleConnectors = {
@@ -104,10 +108,10 @@ describe('Patch request for connectors ', ()=>{
   });
 
   it('Should give 400 when wrong Id is passed in URL ', async () => {
-    const connectorId='1435tt343';
-    const connected= false;
+    const connected=true;
+    const invalid='1435tt343';
     await request(app)
-        .patch(`/connectors/${connectorId}/connectorAvailability`)
+        .patch(`/connectors/${invalid}/connectorAvailability`)
         .send({connected})
         .expect(400);
   });
@@ -116,7 +120,7 @@ describe('Patch request for connectors ', ()=>{
 
 describe('POST request location', () => {
   beforeEach(async function() {
-    await mongoose.connection.db.dropDatabase();
+    await dropDB();
   });
   it('should create a new location', async () => {
     const newLocation = {
@@ -157,7 +161,7 @@ describe('POST request location', () => {
 
 describe('POST request charging Point', ()=>{
   beforeEach(async function() {
-    await mongoose.connection.db.dropDatabase();
+    await dropDB();
   });
   it('should create a new charging point with a valid location ID', async () => {
     const location = await new Location({address: 'Test1'}).save();
@@ -193,7 +197,7 @@ describe('POST request charging Point', ()=>{
 
 describe('POST request connector ', ()=>{
   beforeEach(async function() {
-    await mongoose.connection.db.dropDatabase();
+    await dropDB();
   });
 
   it('should create a new connector', async () => {
