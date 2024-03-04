@@ -5,12 +5,12 @@ const expect = chai.expect;
 const mongoose = require('mongoose');
 const request = require('supertest');
 const app=require('../index');
-const Connector = mongoose.model('Connector', connectorSchema);
 const Location = mongoose.model('Location', locationSchema);
+const Connector = mongoose.model('Connector', connectorSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
+
+
 const {getUrl, stopMongoServer, dropDB}=require('./mongoDbMemory');
-
-
 before(async ()=>{
   const uri= await getUrl();
   await mongoose.connect(uri);

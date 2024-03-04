@@ -1,3 +1,5 @@
+const chai = require('chai');
+const expect = chai.expect;
 const request = require('supertest');
 const app=require('../index');
 const mongoose = require('mongoose');
@@ -5,8 +7,6 @@ const {describe, it, beforeEach} = require('mocha');
 const {locationSchema, chargingPointSchema} =require('../infrastructureSchema');
 const Location = mongoose.model('Location', locationSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
-const chai = require('chai');
-const expect = chai.expect;
 const {dropDB}=require('./mongoDbMemory');
 
 describe('POST request location', () => {

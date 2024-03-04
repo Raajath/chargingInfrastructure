@@ -1,14 +1,13 @@
+const {describe, it, beforeEach} = require('mocha');
+const mongoose = require('mongoose');
 const request = require('supertest');
 const app=require('../index');
-const mongoose = require('mongoose');
-const {describe, it, beforeEach} = require('mocha');
 const {connectorSchema} =require('../infrastructureSchema');
 const Connector = mongoose.model('Connector', connectorSchema);
 const chai = require('chai');
 const expect = chai.expect;
+
 const {dropDB}=require('./mongoDbMemory');
-
-
 describe('Patch request for connectors ', ()=>{
   beforeEach(async function() {
     await dropDB();
