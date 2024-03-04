@@ -1,13 +1,15 @@
 const {connectorSchema, locationSchema, chargingPointSchema} =require('../infrastructureSchema');
 const chai = require('chai');
 const expect = chai.expect;
+
 const mongoose = require('mongoose');
 const request = require('supertest');
 const app=require('../index');
+
 const Location = mongoose.model('Location', locationSchema);
+const {describe, it, afterEach, before, after} = require('mocha');
 const Connector = mongoose.model('Connector', connectorSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
-const {describe, it, afterEach, before, after} = require('mocha');
 
 const {getUrl, stopMongoServer, dropDB}=require('./mongoDbMemory');
 before(async ()=>{
