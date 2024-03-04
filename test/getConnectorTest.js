@@ -63,7 +63,7 @@ describe('GET request connectors  ', ()=>{
     const connectorType = 'TypeA';
 
     const res = await request(app)
-        .get('/connectors/getConnectors')
+        .get('/connectors')
         .send({longitude, latitude, connectorType})
         .expect(200);
 
@@ -90,7 +90,7 @@ describe('GET request connectors  ', ()=>{
     const latitude = null;
     const connectorType = null;
     await request(app)
-        .get('/connectors/getConnectors')
+        .get('/connectors')
         .send({longitude, latitude, connectorType})
         .expect(400);
   });

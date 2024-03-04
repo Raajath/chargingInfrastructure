@@ -8,7 +8,7 @@ router.post('/locations', createLocation);
 router.post('/locations/:locationId/chargePoints', createChargePoint);
 router.post('/locations/:locationId/chargePoints/:chargingPointId/connectors', createConnector);
 
-router.get('/connectors/getConnectors', getConnectors);
+router.get('/connectors', getConnectors);
 router.patch('/connectors/:connectorId/connectorAvailability', updateWhenConnectedOrRemoved);
 
 
