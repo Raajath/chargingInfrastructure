@@ -1,10 +1,8 @@
 const mongoose=require('mongoose');
 const {chargingPointSchema, locationSchema, connectorSchema} =require('../infrastructureSchema');
-const Location = mongoose.model('Location', locationSchema);
-
-const Connector = mongoose.model('Connector', connectorSchema);
-
-const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
+const Location=mongoose.model('Location', locationSchema);
+const Connector=mongoose.model('Connector', connectorSchema);
+const ChargingPoint=mongoose.model('ChargingPoint', chargingPointSchema);
 
 
 async function checkIfIdExists(Model, id, errorMessage) {

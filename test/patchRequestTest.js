@@ -2,10 +2,10 @@ const {describe, it, beforeEach} = require('mocha');
 const mongoose = require('mongoose');
 const request = require('supertest');
 const {connectorSchema} =require('../infrastructureSchema');
-const Connector = mongoose.model('Connector', connectorSchema);
 const chai = require('chai');
 const expect = chai.expect;
 const app=require('../index');
+const Connector=mongoose.model('Connector', connectorSchema);
 
 const {dropDB}=require('./mongoDbMemory');
 describe('Patch request for connectors ', ()=>{
