@@ -1,4 +1,3 @@
-const {describe, it, afterEach, before, after} = require('mocha');
 const {connectorSchema, locationSchema, chargingPointSchema} =require('../infrastructureSchema');
 const chai = require('chai');
 const expect = chai.expect;
@@ -8,7 +7,7 @@ const app=require('../index');
 const Location = mongoose.model('Location', locationSchema);
 const Connector = mongoose.model('Connector', connectorSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
-
+const {describe, it, afterEach, before, after} = require('mocha');
 
 const {getUrl, stopMongoServer, dropDB}=require('./mongoDbMemory');
 before(async ()=>{
