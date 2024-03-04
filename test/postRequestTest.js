@@ -1,122 +1,13 @@
-const {describe, it, beforeEach, afterEach, before, after} = require('mocha');
-const {locationSchema, chargingPointSchema, connectorSchema} =require('../infrastructureSchema');
-const chai = require('chai');
-const expect = chai.expect;
-const mongoose = require('mongoose');
 const request = require('supertest');
 const app=require('../index');
+const mongoose = require('mongoose');
+const {describe, it, beforeEach} = require('mocha');
+const {locationSchema, chargingPointSchema} =require('../infrastructureSchema');
 const Location = mongoose.model('Location', locationSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
-const Connector = mongoose.model('Connector', connectorSchema);
-const {getUrl, stopMongoServer}=require('./mongoDbMemory');
-
-
-before(async ()=>{
-  const uri= await getUrl();
-  await mongoose.connect(uri);
-  console.log('connected');
-});
-
-
-after(async ()=>{
-  await mongoose.disconnect();
-  await stopMongoServer();
-});
-
-async function dropDB() {
-  await mongoose.connection.db.dropDatabase();
-}
-
-
-describe('GET request connectors  ', ()=>{
-  afterEach(async function() {
-    await dropDB();
-  });
-  it('should return connectors  of specified coordinates and of the specified type', async () => {
-    const sampleConnectors = [
-      {
-        coordinates: [0, 0],
-        connectorType: 'TypeA',
-        isAvailableConnector: false,
-      },
-      {
-        coordinates: [0.01, 0.01],
-        connectorType: 'TypeA',
-        isAvailableConnector: true,
-      },
-    ];
-
-    await Connector.create(sampleConnectors);
-
-    const longitude = 0;
-    const latitude = 0;
-    const connectorType = 'TypeA';
-
-    const res = await request(app)
-        .get('/connectors/getConnectors')
-        .send({longitude, latitude, connectorType})
-        .expect(200);
-
-
-    expect(res.body).to.be.an('array');
-    expect(res.body).to.have.lengthOf(1);
-    expect(res.body[0].connectorType).to.equal('TypeA');
-  });
-
-  it('should return 400 when data is empty', async () => {
-    const sampleConnectors = [
-      {
-        coordinates: [0.1, 0],
-        connectorType: 'TypeB',
-        isAvailableConnector: false,
-      },
-
-    ];
-
-    await Connector.create(sampleConnectors);
-
-    const longitude = null;
-    const latitude = null;
-    const connectorType = null;
-    await request(app)
-        .get('/connectors/getConnectors')
-        .send({longitude, latitude, connectorType})
-        .expect(400);
-  });
-});
-
-
-describe('Patch request for connectors ', ()=>{
-  beforeEach(async function() {
-    await dropDB();
-  });
-  it('Should update boolean value isAvailableConnector ', async () => {
-    const sampleConnectors = {
-      isAvailableConnector: true,
-    };
-
-    const connector = await Connector.create(sampleConnectors);
-    const connectorId=connector._id;
-    const connected= false;
-    await request(app)
-        .patch(`/connectors/${connectorId}/connectorAvailability`)
-        .send({connected})
-        .expect(200);
-
-    const result= await Connector.findOne({_id: connectorId});
-    expect(result.isAvailableConnector).equals(false);
-  });
-
-  it('Should give 400 when wrong Id is passed in URL ', async () => {
-    const connected=true;
-    const invalid='1435tt343';
-    await request(app)
-        .patch(`/connectors/${invalid}/connectorAvailability`)
-        .send({connected})
-        .expect(400);
-  });
-});
-
+const chai = require('chai');
+const expect = chai.expect;
+const {dropDB}=require('./mongoDbMemory');
 
 describe('POST request location', () => {
   beforeEach(async function() {
@@ -252,13 +143,4 @@ describe('POST request connector ', ()=>{
   });
 });
 
-
-describe('Wrong Endpoint request', ()=>{
-  it('should give 404 error when  wrong endpoint is entered', async ()=>{
-    const res=await request(app)
-        .post('/')
-        .expect(404);
-    expect(res.body.error).equals('Not found');
-  });
-});
 

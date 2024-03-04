@@ -17,8 +17,8 @@ const chargingPointSchema = new mongoose.Schema({
 });
 
 const connectorSchema = new mongoose.Schema({
-  chargingPointId: String,
-  locationId: String,
+  chargingPointId: {type: String, ref: 'ChargingPoint'},
+  locationId: {type: String, ref: 'Location'},
   connectorType: String,
   wattage: Number,
   manufacturer: String,
