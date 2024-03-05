@@ -2,10 +2,10 @@ const chai = require('chai');
 const expect = chai.expect;
 const request = require('supertest');
 const app=require('../index');
-const {describe, it, beforeEach} = require('mocha');
 const {dropDB, Location, ChargingPoint}=require('./dbFunctionsAndSchema');
 
 
+const {describe, it, beforeEach} = require('mocha');
 describe('POST request location', () => {
   beforeEach(async function() {
     await dropDB();

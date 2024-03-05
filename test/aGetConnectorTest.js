@@ -1,10 +1,12 @@
-const chai = require('chai');
-const expect = chai.expect;
 const request = require('supertest');
 const app=require('../index');
+const chai = require('chai');
+const expect = chai.expect;
+
 const {describe, it, afterEach, before, after} = require('mocha');
 const {dropDB, connectDB, closeConnectionDB,
   Location, Connector, ChargingPoint}=require('./dbFunctionsAndSchema');
+
 
 before(async ()=>{
   connectDB();
@@ -75,12 +77,12 @@ describe('GET nearby connectors  ', ()=>{
       },
 
     ];
-
     await Connector.create(sampleConnectors);
-
     const longitude = 'wrong';
     const latitude = null;
     const connectorType = null;
+
+
     const invalidResult= await request(app)
         .get('/connectors')
         .send({longitude, latitude, connectorType})

@@ -6,6 +6,7 @@ const {describe, it, beforeEach} = require('mocha');
 const chai = require('chai');
 const expect = chai.expect;
 
+
 describe('POST battery information and get expected charging time from estimation server', () => {
   beforeEach(async function() {
     await dropDB();

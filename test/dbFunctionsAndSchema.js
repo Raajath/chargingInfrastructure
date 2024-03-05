@@ -1,6 +1,6 @@
 const {MongoMemoryServer} = require('mongodb-memory-server');
 const mongoose=require('mongoose');
-const {connectorSchema, locationSchema, chargingPointSchema} =require('../infrastructureSchema');
+const {locationSchema, connectorSchema, chargingPointSchema} =require('../infrastructureSchema');
 const Location = mongoose.model('Location', locationSchema);
 const Connector = mongoose.model('Connector', connectorSchema);
 const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
