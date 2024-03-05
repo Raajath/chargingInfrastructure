@@ -31,7 +31,8 @@ const connectorSchema = new mongoose.Schema({
     index: '2dsphere',
   },
 });
-
-// convert locationId chargingId to string and pass as input
-module.exports={locationSchema, chargingPointSchema, connectorSchema};
+const ChargingPoint=mongoose.model('ChargingPoint', chargingPointSchema);
+const Location=mongoose.model('Location', locationSchema);
+const Connector=mongoose.model('Connector', connectorSchema);
+module.exports={Connector, Location, ChargingPoint};
 

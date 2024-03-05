@@ -68,24 +68,15 @@ describe('GET nearby connectors  ', ()=>{
     expect(nearbyConnectors.body[0].locationId.amenities).to.deep.equal(location.amenities);
   });
 
-  it('should return 400 when data is empty or invalid type', async () => {
-    const sampleConnectors = [
-      {
-        coordinates: [0.1, 0],
-        connectorType: 'TypeB',
-        isAvailableConnector: false,
-      },
-
-    ];
-    await Connector.create(sampleConnectors);
-    const longitude = 'wrong';
-    const latitude = null;
-    const connectorType = null;
+  it('should return 400 when client data is empty or invalid type', async () => {
+    const wrongLatitude = 'wrong';
+    const nullLongitude = null;
+    const nullConnectorType = null;
 
 
     const invalidResult= await request(app)
         .get('/connectors')
-        .send({longitude, latitude, connectorType})
+        .send({nullLongitude, wrongLatitude, nullConnectorType})
         .expect(400);
     expect(invalidResult.body.error).to.equals('invalid request');
   });

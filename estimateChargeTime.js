@@ -1,9 +1,5 @@
-const mongoose= require('mongoose');
 const axios =require('axios');
-const {connectorSchema} =require('./infrastructureSchema');
-
-const Connector = mongoose.model('Connector', connectorSchema);
-
+const {Connector} = require('./infrastructureSchema');
 
 const connectorDataWithId= async (req, res)=>{
   try {

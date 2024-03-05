@@ -1,8 +1,5 @@
-const {connectorSchema, locationSchema, chargingPointSchema} =require('./infrastructureSchema');
-const mongoose= require('mongoose');
-const Connector = mongoose.model('Connector', connectorSchema);
-mongoose.model('ChargingPoint', chargingPointSchema);
-mongoose.model('Location', locationSchema);
+const {Connector} =require('./infrastructureSchema');
+
 const getConnectors = async (req, res)=>{
   try {
     const {longitude, latitude, connectorType}=req.body;

@@ -1,9 +1,6 @@
 const {MongoMemoryServer} = require('mongodb-memory-server');
 const mongoose=require('mongoose');
-const {locationSchema, connectorSchema, chargingPointSchema} =require('../infrastructureSchema');
-const Location = mongoose.model('Location', locationSchema);
-const Connector = mongoose.model('Connector', connectorSchema);
-const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
+const {Location, Connector, ChargingPoint} =require('../infrastructureSchema');
 
 let mongoServer;
 async function getUrl() {
