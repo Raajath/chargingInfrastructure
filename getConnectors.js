@@ -1,4 +1,4 @@
-const {connectorSchema, locationSchema, chargingPointSchema} =require('../infrastructureSchema');
+const {connectorSchema, locationSchema, chargingPointSchema} =require('./infrastructureSchema');
 const mongoose= require('mongoose');
 const Connector = mongoose.model('Connector', connectorSchema);
 mongoose.model('ChargingPoint', chargingPointSchema);
@@ -22,8 +22,8 @@ const getConnectors = async (req, res)=>{
     }).populate({path: 'locationId', select: 'stationName amenities address'})
         .populate({path: 'chargingPointId', select: 'manufacturer'});
     res.status(200).send(gotConnectors);
-  } catch (err) {
-    res.status(400).send(err);
+  } catch {
+    res.status(400).send({error: 'invalid request'});
   }
 };
 

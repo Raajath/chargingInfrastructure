@@ -9,6 +9,6 @@ describe('Wrong Endpoint request', ()=>{
     const res=await request(app)
         .post('/')
         .expect(404);
-    expect(res.body.error).equals('Not found');
+    expect(res.body.error).equals('Not found asset server');
   });
 });

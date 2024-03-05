@@ -1,6 +1,5 @@
 const mongoose= require('mongoose');
-
-const {connectorSchema} =require('../infrastructureSchema');
+const {connectorSchema} =require('./infrastructureSchema');
 const Connector = mongoose.model('Connector', connectorSchema);
 const updateWhenConnectedOrRemoved = async (req, res)=>{
   try {
@@ -12,8 +11,8 @@ const updateWhenConnectedOrRemoved = async (req, res)=>{
             {$set: {isAvailableConnector: connected}},
         );
     res.status(200).send(result);
-  } catch (error) {
-    res.status(400).send(error);
+  } catch {
+    res.status(400).send({error: 'invalid ConnectorID'});
   }
 };
 

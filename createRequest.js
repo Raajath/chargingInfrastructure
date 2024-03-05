@@ -1,14 +1,14 @@
 const mongoose=require('mongoose');
-const {chargingPointSchema, locationSchema, connectorSchema} =require('../infrastructureSchema');
+const {chargingPointSchema, locationSchema, connectorSchema} =require('./infrastructureSchema');
 const ChargingPoint=mongoose.model('ChargingPoint', chargingPointSchema);
 const Location=mongoose.model('Location', locationSchema);
 const Connector=mongoose.model('Connector', connectorSchema);
 
 
-async function checkIfIdExists(Model, id, errorMessage) {
-  const documentExists = await Model.findOne({_id: id});
+async function checkIfIdExists(Model, id) {
+  const documentExists= await Model.findOne({_id: id});
   if (!documentExists) {
-    throw new Error(errorMessage);
+    throw new Error();
   }
 }
 
@@ -28,7 +28,7 @@ const createChargePoint = async (req, res) => {
     const locationId=req.params.locationId;
     const chargePointData=req.body;
 
-    await checkIfIdExists(Location, locationId, 'locationId does not exist ');
+    await checkIfIdExists(Location, locationId);
 
 
     const chargingPoint = new ChargingPoint(
@@ -40,8 +40,8 @@ const createChargePoint = async (req, res) => {
     );
     await chargingPoint.save();
     res.status(201).send(chargingPoint);
-  } catch (error) {
-    res.status(400).send(error);
+  } catch {
+    res.status(400).send({error: 'invalid id chargePoint insertion'});
   }
 };
 
@@ -50,8 +50,8 @@ const createConnector= async (req, res) => {
     const connectorData=req.body;
     const locationId = req.params.locationId;
     const chargingPointId = req.params.chargingPointId;
-    await checkIfIdExists(Location, locationId, 'locationId does not exist ');
-    await checkIfIdExists(ChargingPoint, chargingPointId, 'chargingPointId does not exist');
+    await checkIfIdExists(Location, locationId);
+    await checkIfIdExists(ChargingPoint, chargingPointId);
     const location=await Location.findOne({_id: locationId});
 
     const connector = new Connector(
@@ -65,13 +65,14 @@ const createConnector= async (req, res) => {
           maxSessionDuration: connectorData.maxSessionDuration,
           costPerKWh: connectorData.costPerKWh,
           coordinates: location.coordinates,
+          connectorPower: connectorData.connectorPower,
           // automatically assign coordinates from location while inserting
         },
     );
     await connector.save();
     res.status(201).send(connector);
-  } catch (insertError) {
-    res.status(400).send(insertError);
+  } catch {
+    res.status(400).send({error: 'invalid id connector insertion'});
   }
 };
 

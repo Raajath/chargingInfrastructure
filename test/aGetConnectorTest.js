@@ -1,31 +1,22 @@
-const {connectorSchema, locationSchema, chargingPointSchema} =require('../infrastructureSchema');
 const chai = require('chai');
 const expect = chai.expect;
-
-const mongoose = require('mongoose');
 const request = require('supertest');
 const app=require('../index');
-
-const Location = mongoose.model('Location', locationSchema);
 const {describe, it, afterEach, before, after} = require('mocha');
-const Connector = mongoose.model('Connector', connectorSchema);
-const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
+const {dropDB, connectDB, closeConnectionDB,
+  Location, Connector, ChargingPoint}=require('./dbFunctionsAndSchema');
 
-const {getUrl, stopMongoServer, dropDB}=require('./mongoDbMemory');
 before(async ()=>{
-  const uri= await getUrl();
-  await mongoose.connect(uri);
-  console.log('connected');
+  connectDB();
 });
 
 
 after(async ()=>{
-  await mongoose.disconnect();
-  await stopMongoServer();
+  closeConnectionDB();
 });
 
 
-describe('GET request connectors  ', ()=>{
+describe('GET nearby connectors  ', ()=>{
   afterEach(async function() {
     await dropDB();
   });
@@ -62,19 +53,20 @@ describe('GET request connectors  ', ()=>{
     const latitude = 0;
     const connectorType = 'TypeA';
 
-    const res = await request(app)
+    const nearbyConnectors = await request(app)
         .get('/connectors')
         .send({longitude, latitude, connectorType})
         .expect(200);
 
-    expect(res.body).to.be.an('array');
-    expect(res.body).to.have.lengthOf(1);
-    expect(res.body[0].connectorType).to.equal('TypeA');
-    expect(res.body[0].chargingPointId.manufacturer).to.equal(chargePoint.manufacturer);
-    expect(res.body[0].locationId.amenities).to.deep.equal(location.amenities);
+    expect(nearbyConnectors.body).to.be.an('array');
+    expect(nearbyConnectors.body).to.have.lengthOf(1);
+    expect(nearbyConnectors.body[0].connectorType).to.equal('TypeA');
+    expect(nearbyConnectors.body[0].chargingPointId.manufacturer)
+        .to.equal(chargePoint.manufacturer);
+    expect(nearbyConnectors.body[0].locationId.amenities).to.deep.equal(location.amenities);
   });
 
-  it('should return 400 when data is empty', async () => {
+  it('should return 400 when data is empty or invalid type', async () => {
     const sampleConnectors = [
       {
         coordinates: [0.1, 0],
@@ -86,13 +78,14 @@ describe('GET request connectors  ', ()=>{
 
     await Connector.create(sampleConnectors);
 
-    const longitude = null;
+    const longitude = 'wrong';
     const latitude = null;
     const connectorType = null;
-    await request(app)
+    const invalidResult= await request(app)
         .get('/connectors')
         .send({longitude, latitude, connectorType})
         .expect(400);
+    expect(invalidResult.body.error).to.equals('invalid request');
   });
 });
 

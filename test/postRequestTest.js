@@ -2,12 +2,9 @@ const chai = require('chai');
 const expect = chai.expect;
 const request = require('supertest');
 const app=require('../index');
-const mongoose = require('mongoose');
 const {describe, it, beforeEach} = require('mocha');
-const {locationSchema, chargingPointSchema} =require('../infrastructureSchema');
-const Location = mongoose.model('Location', locationSchema);
-const ChargingPoint = mongoose.model('ChargingPoint', chargingPointSchema);
-const {dropDB}=require('./mongoDbMemory');
+const {dropDB, Location, ChargingPoint}=require('./dbFunctionsAndSchema');
+
 
 describe('POST request location', () => {
   beforeEach(async function() {
@@ -21,18 +18,18 @@ describe('POST request location', () => {
       coordinates: [-74.0060, 40.7128],
     };
 
-    const response = await request(app)
+    const locationResponse = await request(app)
         .post('/locations')
         .send(newLocation)
         .expect(201);
 
-    expect(response.body.address).to.deep.equal(newLocation.address);
-    expect(response.body.stationName).to.deep.equal(newLocation.stationName);
-    expect(response.body.amenities).to.be.an('array');
-    expect(response.body.amenities[0]).to.be.a('string');
-    expect(response.body.coordinates).to.be.an('array').with.lengthOf(2);
-    expect(response.body.coordinates[0]).to.be.a('number');
-    expect(response.body.coordinates[1]).to.be.a('number');
+    expect(locationResponse.body.address).to.deep.equal(newLocation.address);
+    expect(locationResponse.body.stationName).to.deep.equal(newLocation.stationName);
+    expect(locationResponse.body.amenities).to.be.an('array');
+    expect(locationResponse.body.amenities[0]).to.be.a('string');
+    expect(locationResponse.body.coordinates).to.be.an('array').with.lengthOf(2);
+    expect(locationResponse.body.coordinates[0]).to.be.a('number');
+    expect(locationResponse.body.coordinates[1]).to.be.a('number');
   });
 
   it('should return a 400 error for creating a location with missing address fields', async () => {
@@ -41,11 +38,11 @@ describe('POST request location', () => {
       amenities: ['Restroom', 'Wifi'],
     };
 
-    const response = await request(app)
+    const invalidResponse = await request(app)
         .post('/locations')
         .send(invalidLocation)
         .expect(400);
-    expect(response.body.errors).to.exist;
+    expect(invalidResponse.body.errors).to.exist;
   });
 });
 
@@ -60,15 +57,15 @@ describe('POST request charging Point', ()=>{
       manufacturer: 'abb',
       isAvailableChargingPoint: true,
     };
-    const response = await request(app)
+    const CPointResponse = await request(app)
         .post(`/locations/${location._id}/chargePoints`)
         .send(chargePointData)
         .expect(201);
 
-    expect(response.body.manufacturer).to.deep.equal(chargePointData.manufacturer);
-    expect(response.body.isAvailableChargingPoint).to.deep
+    expect(CPointResponse.body.manufacturer).to.deep.equal(chargePointData.manufacturer);
+    expect(CPointResponse.body.isAvailableChargingPoint).to.deep
         .equal(chargePointData.isAvailableChargingPoint);
-    expect(response.body.locationId).to.equal(location._id.toString());
+    expect(CPointResponse.body.locationId).to.equal(location._id.toString());
   });
 
   it('should return an 400 for creating a chargingPoint with invalid Id', async () => {
@@ -78,10 +75,11 @@ describe('POST request charging Point', ()=>{
     };
     const invalidId=['65de084c2682eb4883cc8e25', 12345];
     for (let i=0; i<invalidId.length; i++) {
-      await request(app)
+      const invalidResponse = await request(app)
           .post(`/locations/${invalidId[i]}/chargePoints`)
           .send(newChargePoint)
           .expect(400);
+      expect(invalidResponse.body.error).to.equals('invalid id chargePoint insertion');
     }
   });
 });
@@ -104,23 +102,25 @@ describe('POST request connector ', ()=>{
 
     };
 
-    const response = await request(app)
+    const connectorResponse = await request(app)
         .post(`/locations/${location._id}/chargePoints/${chargingPoint._id}/connectors`)
         .send(connectorData)
         .expect(201);
 
-    const find= await Location.find({_id: response.body.locationId});
+    const find= await Location.find({_id: connectorResponse.body.locationId});
     expect(find[0].address).to.equal(location.address);// show we can use find with inputid string
 
-    expect(response.body.locationId).to.equal(location._id.toString());
-    expect(response.body.chargingPointId).to.equal(chargingPoint._id.toString());
-    expect(response.body.connectorType).to.deep.equal(connectorData.connectorType);
-    expect(response.body.wattage).to.deep.equal(connectorData.wattage);
-    expect(response.body.manufacturer).to.deep.equal(connectorData.manufacturer);
-    expect(response.body.isAvailableConnector).to.deep.equal(connectorData.isAvailableConnector);
-    expect(response.body.maxSessionDuration).to.deep.equal(connectorData.maxSessionDuration);
-    expect(response.body.costPerKWh).to.deep.equal(connectorData.costPerKWh);
-    expect(response.body.coordinates).to.deep.equal(location.coordinates);
+    expect(connectorResponse.body.locationId).to.equal(location._id.toString());
+    expect(connectorResponse.body.chargingPointId).to.equal(chargingPoint._id.toString());
+    expect(connectorResponse.body.connectorType).to.deep.equal(connectorData.connectorType);
+    expect(connectorResponse.body.wattage).to.deep.equal(connectorData.wattage);
+    expect(connectorResponse.body.manufacturer).to.deep.equal(connectorData.manufacturer);
+    expect(connectorResponse.body.isAvailableConnector)
+        .to.deep.equal(connectorData.isAvailableConnector);
+    expect(connectorResponse.body.maxSessionDuration)
+        .to.deep.equal(connectorData.maxSessionDuration);
+    expect(connectorResponse.body.costPerKWh).to.deep.equal(connectorData.costPerKWh);
+    expect(connectorResponse.body.coordinates).to.deep.equal(location.coordinates);
   });
   it('should return an 400 for creating a connector with invalid Id', async () => {
     const connectorData = {
@@ -135,10 +135,11 @@ describe('POST request connector ', ()=>{
     const invalidIdCP=['4365634', 12345];
 
     for (let i=0; i<invalidIdCP.length; i++) {
-      await request(app)
+      const invalidResponse= await request(app)
           .post(`/locations/${invalidIdLocation[i]}/chargePoints/${invalidIdCP[i]}/connectors`)
           .send(connectorData)
           .expect(400);
+      expect(invalidResponse.body.error).to.equals('invalid id connector insertion');
     }
   });
 });
