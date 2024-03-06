@@ -1,6 +1,7 @@
 const axios =require('axios');
 const {Connector} = require('./infrastructureSchema');
 
+const estimateServerURL='http://localhost:8080/estimate';
 const connectorDataWithId= async (req, res)=>{
   try {
     const {soc, batteryCapacity}=req.body;
@@ -12,7 +13,7 @@ const connectorDataWithId= async (req, res)=>{
       batteryCapacity: batteryCapacity,
       connectorPower: connectorData.connectorPower,
     };
-    const estimationResponse = await axios.post('http://localhost:8080/estimate', estimationData);
+    const estimationResponse = await axios.post(estimateServerURL, estimationData);
     const responseData = {
       connectorType: connectorData.connectorType,
       available: connectorData.isAvailableConnector,
@@ -20,9 +21,9 @@ const connectorDataWithId= async (req, res)=>{
       costPerKWh: connectorData.costPerKWh,
       estimateChargingTime: estimationResponse.data.expectedTime,
     };
-    res.status(201).send(responseData);
+    res.status(200).send(responseData);
   } catch (error) {
-    res.status(400).send({error: 'invalid connectorId'});
+    res.status(400).send({error: 'invalid connectorId or bad request'});
   }
 };
 

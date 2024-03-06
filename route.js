@@ -10,6 +10,6 @@ router.post('/locations/:locationId/chargePoints', createChargePoint);
 router.post('/locations/:locationId/chargePoints/:chargingPointId/connectors', createConnector);
 router.get('/connectors', getConnectors);
 router.patch('/connectors/:connectorId/connectorAvailability', updateWhenConnectedOrRemoved);
-router.post('/connectors/:connectorId', connectorDataWithId);
+router.get('/connectors/:connectorId', connectorDataWithId);
 
 module.exports=router;
