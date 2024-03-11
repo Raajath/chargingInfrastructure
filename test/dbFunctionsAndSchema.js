@@ -11,7 +11,7 @@ async function setUrl() {
 
 async function setPortAndConnect() {
   const url=await setUrl();
-  configurations.setConfigurations(8080, url);
+  await configurations.setConfigurations(8080, url);
 }
 
 

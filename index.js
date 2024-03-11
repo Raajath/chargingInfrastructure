@@ -11,6 +11,8 @@ app.use((req, res, next)=>{
   });
 });
 
+let server;
+
 const configurations = {
   PORT: null,
   URL: null,
@@ -18,8 +20,11 @@ const configurations = {
     this.PORT = port;
     this.URL = url;
     await mongoose.connect(this.URL);
-    app.listen(this.PORT);
+    server=app.listen(this.PORT);
   },
 };
+const stopServer = () => {
+  server.close();
+};
 
-module.exports = {app, configurations};
+module.exports = {app, configurations, stopServer};

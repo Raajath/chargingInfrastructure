@@ -4,13 +4,22 @@ const expect = chai.expect;
 const {describe, it, afterEach, after} = require('mocha');
 const {dropDB, closeConnectionDB, setPortAndConnect,
   Location, Connector, ChargingPoint}=require('./dbFunctionsAndSchema');
-const {app}=require('../index');
+const {app, stopServer}=require('../index');
+const mongoose=require('mongoose');
+
 
 before(async ()=>{
-  setPortAndConnect();
+  await setPortAndConnect();
 });
 after(async ()=>{
-  closeConnectionDB();
+  await closeConnectionDB();
+  stopServer();
+  mongoose.disconnect()
+      .then(()=>{
+        require('../prodApp');
+        closeConnectionDB();
+        stopServer();
+      });
 });
 
 
