@@ -14,10 +14,10 @@ app.use((req, res, next)=>{
 const configurations = {
   PORT: null,
   URL: null,
-  setConfigurations(port, url) {
+  async setConfigurations(port, url) {
     this.PORT = port;
     this.URL = url;
-    mongoose.connect(this.URL);
+    await mongoose.connect(this.URL);
     app.listen(this.PORT);
   },
 };
