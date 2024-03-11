@@ -1,10 +1,10 @@
-const request = require('supertest');
 const chai = require('chai');
+const request = require('supertest');
 const expect = chai.expect;
 const {describe, it, afterEach, after} = require('mocha');
 const {dropDB, closeConnectionDB, setPortAndConnect,
   Location, Connector, ChargingPoint}=require('./dbFunctionsAndSchema');
-
+const {app}=require('../index');
 
 before(async ()=>{
   setPortAndConnect();
@@ -14,7 +14,6 @@ after(async ()=>{
 });
 
 
-const {app}=require('../index');
 async function makeGetRequestAndCheckStatus(URL, data, status) {
   const result=await request(app)
       .get(URL)
