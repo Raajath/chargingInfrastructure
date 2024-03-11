@@ -54,13 +54,12 @@ const createConnector= async (req, res) => {
           chargingPointId: chargingPointId,
           locationId: locationId,
           connectorType: connectorData.connectorType,
-          wattage: connectorData.wattage,
           manufacturer: connectorData.manufacturer,
           isAvailableConnector: connectorData.isAvailableConnector,
           maxSessionDuration: connectorData.maxSessionDuration,
           costPerKWh: connectorData.costPerKWh,
           coordinates: location.coordinates,
-          connectorPower: connectorData.connectorPower,
+          connectorPowerKWH: connectorData.connectorPowerKWH,
           // automatically assign coordinates from location while inserting
         },
     );

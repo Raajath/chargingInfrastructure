@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const request = require('supertest');
-const app=require('../index');
+const {app}=require('../index');
 const {dropDB, Location, ChargingPoint}=require('./dbFunctionsAndSchema');
 
 
@@ -27,6 +27,8 @@ describe('POST request location', () => {
     };
     const URL='/locations';
     const locationResponse = await makePostRequestAndCheckStatus(URL, newLocation, 201);
+
+
     expect(locationResponse.body.address).to.deep.equal(newLocation.address);
     expect(locationResponse.body.stationName).to.deep.equal(newLocation.stationName);
     expect(locationResponse.body.amenities).to.be.an('array');
@@ -91,11 +93,11 @@ describe('POST request connector ', ()=>{
     const chargingPoint=await new ChargingPoint({manufacturer: 'abb'}).save();
     const inputConnectorData = {
       connectorType: 'DC',
-      wattage: 7,
       manufacturer: 'abb',
       isAvailableConnector: true,
       maxSessionDuration: 2,
       costPerKWh: 2,
+      connectorPowerKWH: 10,
 
     };
     const URL=`/locations/${location._id}/chargePoints/${chargingPoint._id}/connectors`;
@@ -104,9 +106,10 @@ describe('POST request connector ', ()=>{
     expect(find[0].address).to.equal(location.address);// show we can use find with inputid string
     expect(connectorResponse.body.locationId).to.equal(location._id.toString());
     expect(connectorResponse.body.chargingPointId).to.equal(chargingPoint._id.toString());
+    expect(connectorResponse.body.coordinates).to.deep.equal(location.coordinates);
 
-    const attributes=['connectorType', 'wattage', 'manufacturer',
-      'isAvailableConnector', 'maxSessionDuration'];
+    const attributes=['connectorType', 'manufacturer',
+      'isAvailableConnector', 'maxSessionDuration', 'connectorPowerKWH'];
     const outputConnectorData=connectorResponse.body;
     attributes.forEach((attribute)=>{
       expect(outputConnectorData[attribute]).to.deep.equal(inputConnectorData[attribute]);

@@ -2,8 +2,7 @@ const {describe, it, beforeEach} = require('mocha');
 const request = require('supertest');
 const chai = require('chai');
 const expect = chai.expect;
-const app=require('../index');
-
+const {app}=require('../index');
 
 const {dropDB, Connector}=require('./dbFunctionsAndSchema');
 describe('PATCH request for connectors ', ()=>{

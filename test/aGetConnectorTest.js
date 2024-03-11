@@ -1,22 +1,27 @@
 const request = require('supertest');
-const app=require('../index');
 const chai = require('chai');
 const expect = chai.expect;
-
-const {describe, it, afterEach, before, after} = require('mocha');
-const {dropDB, connectDB, closeConnectionDB,
+const {describe, it, afterEach, after} = require('mocha');
+const {dropDB, closeConnectionDB, setPortAndConnect,
   Location, Connector, ChargingPoint}=require('./dbFunctionsAndSchema');
 
 
 before(async ()=>{
-  connectDB();
+  setPortAndConnect();
 });
-
-
 after(async ()=>{
   closeConnectionDB();
 });
 
+
+const {app}=require('../index');
+async function makeGetRequestAndCheckStatus(URL, data, status) {
+  const result=await request(app)
+      .get(URL)
+      .send(data)
+      .expect(status);
+  return result;
+}
 
 describe('GET nearby connectors  ', ()=>{
   afterEach(async function() {
@@ -55,11 +60,9 @@ describe('GET nearby connectors  ', ()=>{
     const latitude = 0;
     const connectorType = 'TypeA';
 
-    const nearbyConnectors = await request(app)
-        .get('/connectors')
-        .send({longitude, latitude, connectorType})
-        .expect(200);
-
+    const URL='/connectors';
+    const nearbyConnectors =await makeGetRequestAndCheckStatus(URL,
+        {longitude, latitude, connectorType}, 200);
     expect(nearbyConnectors.body).to.be.an('array');
     expect(nearbyConnectors.body).to.have.lengthOf(1);
     expect(nearbyConnectors.body[0].connectorType).to.equal('TypeA');
@@ -73,11 +76,9 @@ describe('GET nearby connectors  ', ()=>{
     const nullLongitude = null;
     const nullConnectorType = null;
 
-
-    const invalidResult= await request(app)
-        .get('/connectors')
-        .send({nullLongitude, wrongLatitude, nullConnectorType})
-        .expect(400);
+    const url='/connectors';
+    const invalidResult= await makeGetRequestAndCheckStatus(url,
+        {nullLongitude, wrongLatitude, nullConnectorType}, 400);
     expect(invalidResult.body.error).to.equals('invalid request');
   });
 });

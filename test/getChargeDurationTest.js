@@ -1,7 +1,7 @@
 const request = require('supertest');
 const nock = require('nock');
 const {Connector, dropDB}=require('./dbFunctionsAndSchema');
-const app=require('../index');
+const {app}=require('../index');
 const {describe, it, beforeEach} = require('mocha');
 const chai = require('chai');
 const expect = chai.expect;
@@ -20,8 +20,8 @@ describe('GET information and get expected charging time from estimation server'
     await dropDB();
   });
   it('should return connector data with estimated charging time', async () => {
-    const estimationResponse = {expectedTime: 2};
-    nock('http://localhost:8080')
+    const estimationResponse = {expectedTimeHours: 2};
+    nock('http://localhost:5000')
         .post('/estimate')
         .reply(201, estimationResponse);
 
@@ -30,7 +30,7 @@ describe('GET information and get expected charging time from estimation server'
       isAvailableConnector: true,
       manufacturer: 'abb',
       costPerKWh: 0.1,
-      connectorPower: 10,
+      connectorPowerKWH: 10,
     };
     const connector=await Connector.create(connectorData);
     const userBatteryData={
@@ -40,11 +40,11 @@ describe('GET information and get expected charging time from estimation server'
     };
 
     const connectorResult = await makeRequest(connector._id, userBatteryData, 200);
-    expect(connectorResult.body.estimateChargingTime).to.equals(2);
+    expect(connectorResult.body.estimateChargingTimeHours).to.equals(2);
   });
 
   it('should return 400 when no data is sent', async () => {
-    nock('http://localhost:8080')
+    nock('http://localhost:5000')
         .post('/estimate')
         .reply(400);
 
@@ -70,3 +70,4 @@ describe('GET information and get expected charging time from estimation server'
     expect(wrongResponse.body.error).to.equals('invalid connectorId or bad request');
   });
 });
+

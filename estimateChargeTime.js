@@ -1,7 +1,7 @@
 const axios =require('axios');
 const {Connector} = require('./infrastructureSchema');
 
-const estimateServerURL='http://localhost:8080/estimate';
+const estimateServerURL='http://localhost:5000/estimate';
 const connectorDataWithId= async (req, res)=>{
   try {
     const {soc, batteryCapacity}=req.body;
@@ -11,7 +11,7 @@ const connectorDataWithId= async (req, res)=>{
     const estimationData={
       soc: soc,
       batteryCapacity: batteryCapacity,
-      connectorPower: connectorData.connectorPower,
+      connectorPowerKWH: connectorData.connectorPowerKWH,
     };
     const estimationResponse = await axios.post(estimateServerURL, estimationData);
     const responseData = {
@@ -19,7 +19,7 @@ const connectorDataWithId= async (req, res)=>{
       available: connectorData.isAvailableConnector,
       manufacturer: connectorData.manufacturer,
       costPerKWh: connectorData.costPerKWh,
-      estimateChargingTime: estimationResponse.data.expectedTime,
+      estimateChargingTimeHours: estimationResponse.data.expectedTimeHours,
     };
     res.status(200).send(responseData);
   } catch (error) {
