@@ -43,19 +43,15 @@ describe('GET information and get expected charging time from estimation server'
     expect(connectorResult.body.estimateChargingTimeHours).to.equals(2);
   });
 
-  it('should return 400 when no data is sent', async () => {
-    nock('http://localhost:5000')
-        .post('/estimate')
-        .reply(400);
-
+  it('should return 500 when axios request not made ', async () => {
     const connectorData = {
       connectorType: 'Type A',
     };
     const connector=await Connector.create(connectorData);
-    const userBatteryData={ }; // empty client data
-
-    const connectorResultFail = await makeRequest(connector._id, userBatteryData, 400);
-    expect(connectorResultFail.body.error).to.equals('invalid connectorId or bad request');
+    const userBatteryData={soc: 60,
+      batteryCapacity: 60};
+    const connectorResultFail = await makeRequest(connector._id, userBatteryData, 500);
+    expect(connectorResultFail.body.error).to.equals('Estimation server error');
   });
 
 

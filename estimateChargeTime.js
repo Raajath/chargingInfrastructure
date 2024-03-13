@@ -13,7 +13,12 @@ const connectorDataWithId= async (req, res)=>{
       batteryCapacity: batteryCapacity,
       connectorPowerKWH: connectorData.connectorPowerKWH,
     };
-    const estimationResponse = await axios.post(estimateServerURL, estimationData);
+    let estimationResponse;
+    try {
+      estimationResponse = await axios.post(estimateServerURL, estimationData);
+    } catch {
+      res.status(500).send({error: 'Estimation server error'});
+    }
     const responseData = {
       connectorType: connectorData.connectorType,
       available: connectorData.isAvailableConnector,
