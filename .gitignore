@@ -7,6 +7,9 @@
 node_modules/
 dist/
 
+DockerFile
+.dockerignore
+
 # Test artifacts
 coverage
 .nyc_output

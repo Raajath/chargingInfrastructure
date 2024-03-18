@@ -1,4 +1,4 @@
 const {configurations} = require('./index');
-process.env.PORT = 3000;
-process.env.MONGO_URL = 'mongodb://localhost/EvModel';
+const {setEstimateUrl}=require('./estimateChargeTime');
+setEstimateUrl(process.env.ESTIMATE_URL);
 configurations.setConfigurations(process.env.PORT, process.env.MONGO_URL);

@@ -1,7 +1,12 @@
 const axios =require('axios');
 const {Connector} = require('./infrastructureSchema');
 
-const estimateServerURL='http://localhost:5000/estimate';
+let estimateServerURL;
+
+function setEstimateUrl(url) {
+  estimateServerURL=url;
+}
+
 const connectorDataWithId= async (req, res)=>{
   try {
     const {soc, batteryCapacity}=req.body;
@@ -16,20 +21,20 @@ const connectorDataWithId= async (req, res)=>{
     let estimationResponse;
     try {
       estimationResponse = await axios.post(estimateServerURL, estimationData);
+      const responseData = {
+        connectorType: connectorData.connectorType,
+        available: connectorData.isAvailableConnector,
+        manufacturer: connectorData.manufacturer,
+        costPerKWh: connectorData.costPerKWh,
+        estimateChargingTimeHours: estimationResponse.data.expectedTimeHours,
+      };
+      res.status(200).send(responseData);
     } catch {
       res.status(500).send({error: 'Estimation server error'});
     }
-    const responseData = {
-      connectorType: connectorData.connectorType,
-      available: connectorData.isAvailableConnector,
-      manufacturer: connectorData.manufacturer,
-      costPerKWh: connectorData.costPerKWh,
-      estimateChargingTimeHours: estimationResponse.data.expectedTimeHours,
-    };
-    res.status(200).send(responseData);
   } catch (error) {
     res.status(400).send({error: 'invalid connectorId or bad request'});
   }
 };
 
-module.exports={connectorDataWithId};
+module.exports={connectorDataWithId, setEstimateUrl};
