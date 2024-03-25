@@ -16,7 +16,7 @@ services:
       - mongo2
       - mongo3
     networks:
-      - asset_network
+      - external: true
 
 networks:
   asset_network:
