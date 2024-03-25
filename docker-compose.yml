@@ -21,9 +21,3 @@ services:
 networks:
   dockeriseevsetup_asset_network:
     external: true
-
-volumes:
-  mongo1: {}
-  mongo2: {}
-  mongo3: {}
-
