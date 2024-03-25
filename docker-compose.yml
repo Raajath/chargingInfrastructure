@@ -16,11 +16,11 @@ services:
       - mongo2
       - mongo3
     networks:
-      - external: true
+      - dockeriseevsetup_asset_network
 
 networks:
-  asset_network:
-    driver: bridge
+  dockeriseevsetup_asset_network:
+    external: true
 
 volumes:
   mongo1: {}
