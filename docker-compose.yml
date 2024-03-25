@@ -13,12 +13,7 @@ services:
 
     networks:
       - dockeriseevsetup_asset_network
-      
-    depends_on:
-      - mongo1
-      - mongo2
-      - mongo3
-   
+         
 networks:
   dockeriseevsetup_asset_network:
     external: true
