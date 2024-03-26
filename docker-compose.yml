@@ -8,7 +8,7 @@ services:
       - 3000:3000
     environment:
       PORT: 3000
-      MONGO_URL:  mongodb://admin:raj123@mongo1:27017,mongo2:27017,mongo3:27017/EvModel?replicaSet=mongoReplica&w=1
+      MONGO_URL:  mongodb://rsAdmin:raj123@mongo1:27017,mongo2:27017,mongo3:27017/EvModel?replicaSet=mongoReplica&w=1
       ESTIMATE_URL: http://estimate:5000/estimate
 
     networks:
